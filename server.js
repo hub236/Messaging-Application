@@ -1,29 +1,26 @@
-const fs = require('fs');
-const https = require('https');
 const express = require('express');
-const socketIO = require('socket.io');
-
+const http = require('http');
+const { Server } = require('socket.io');
 const app = express();
 
-// SSL cert
-const options = {
-  key: fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/fullchain.pem')
-};
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*", // or your frontend URL
+    methods: ["GET", "POST"]
+  }
+});
 
-const server = https.createServer(options, app);
-const io = socketIO(server);
-
-// Serve frontend
 app.use(express.static('public'));
 
-io.on('connection', (socket) => {
+io.on('connection', socket => {
   console.log('A user connected');
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
+  socket.on('message', data => {
+    io.emit('message', data);
   });
 });
 
-server.listen(443, () => {
-  console.log('Server running at https://yourdomain.com');
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
