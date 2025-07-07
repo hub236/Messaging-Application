@@ -1,4 +1,4 @@
-# Messenging-Application
+# Messenging-Software
 This RTC requires Socket.io, Node.js, and a VPS like render or railway.
 Your chatroom folder should have another folder called "public" with index.html, style.css, and script.js.
 outside of your "public" folder there should be server.js, and package.json.
